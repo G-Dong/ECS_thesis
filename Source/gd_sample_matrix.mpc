@@ -1,0 +1,70 @@
+# (C) 2016 University of Bristol. See License.txt
+# sfix and cfix is just two function which can be called during the programming.
+# the semantic is indent-sensitive
+
+program.bit_length = 80
+print "program.bit_length: ", program.bit_length
+program.security = 40# The value in GF = 2^40
+
+def dot(w,X):
+    n = 9577
+    m = 140
+    t = Array(n,sfix)
+    for i in range(n):
+        t[i] = sfix(0)
+    for i in range(n):#9577
+        for j in range(m):#140
+           t[i] = t[i] + X[j+m*(i-1)]*w[j]
+    return t
+
+
+n = 9577
+m = 140
+
+
+X = Array(1340780,sint)
+
+Y = Array(9577,sint)
+
+for i in range(1340780):
+    X[i] = sint.get_raw_input_from(0)
+for i in range(9577):
+    Y[i] = sint.get_raw_input_from(1)
+
+
+
+# define array of fixed points
+#X = Array(n,sint)
+#Y = Array(n,sint)
+
+i = 0
+g = Array(m,sfix) # initial value of gradient
+w = Array(m,sfix)
+for i in range(m):
+    w[i] = sfix(0)
+for i in range(m):
+    g[i] = sfix(0)
+
+#X[i] = sint(0)
+e = sfix(i)# initial value of error
+sum = sfix(i)
+alpha = sfix(0.1)
+iteration = 10
+
+#g[i] = g[i] + (1.0/n * (dot(w,X)[j]-Y[j+m*(i-1)]))*X[j+m*(i-1)]
+
+for a in range(iteration):
+    for i in range(m): # initial value of gd
+        g[i] = sfix(0)
+    for i in range(m):#140
+        for j in range(n):#9577
+            g[i] = g[i] + 1.0/n * (dot(w,X)[j]-Y[j])*X[i+m*(j-1)]
+    for i in range(m):
+        w[i] = w[i] - alpha*g[i]
+e = sum**2
+
+print_str('ERORRRRRRRRRRRRRRRRRRRR %s', e.reveal())
+for i in range(m):
+    print_str('wwwwwwwwwwwwwwwwwwwwwww %s', w[i].reveal())
+
+

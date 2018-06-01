@@ -1,0 +1,130 @@
+# (C) 2016 University of Bristol. See License.txt
+
+# sfix and cfix is just two function which can be called during the programming.
+# the semantic is indent-sensitive
+
+program.bit_length = 80
+print "program.bit_length: ", program.bit_length
+program.security = 40# The value in GF = 2^40
+
+import sys
+sys.setrecursionlimit(1000000)
+
+def dot(w,X):
+    n = rows #rows
+    m = columns  #columns
+    t = Array(n,sfix)
+    for i in range(n):
+        t[i] = sfix(0)
+    for i in range(n):#100
+        for j in range(m):#150
+           t[i] = t[i] + X[j+m*i]*w[j]
+    return t
+
+def error(wX, Y):
+    e = sfix(0)
+    delta = 0
+    for i in range(n):
+        delta = wX[i] - Y[i]
+        e = e + delta*delta
+    return e
+
+def load_int(Y,num):
+    Y_amp = Array(num,sfix)
+    for i in range(num):
+        d = sfix(); d.load_int(Y[i])
+        Y_amp[i] = d
+    return Y_amp
+
+def get_real_data(X_amp, num, amp_ratio):
+    X = Array(num,sfix)
+    for i in range(num):
+        X[i] = X_amp[i]/amp_ratio
+    return X
+
+def stochastic_gradient_descend(iteration, alpha, w, X_int, Y_int, m, n,amp_ratio, rd_index):
+    prod = m*n
+    X_amp = load_int(X_int, prod)
+    Y_amp = load_int(Y_int, n)
+    X = get_real_data(X_amp, prod, amp_ratio)
+    Y = get_real_data(Y_amp, n, amp_ratio)
+
+    Y_tmp = Array(n, sfix)
+    for i in range(n):
+        Y_tmp[i] = Y[i]/(2*n)
+
+    for a in range(iteration):
+        interprod = dot(w,X)
+        interprod_tmp = Array(n, sfix)
+
+        for i in range(n):
+            interprod_tmp[i] = interprod[i]/(2*n)
+
+        e = error(interprod,Y)
+        print_str('ERORR is: %s',e.reveal())
+
+
+        for i in range(m): # initial value of gd
+            g[i] = sfix(0)
+
+        for i in rd_index:#rows
+            delta = (interprod_tmp[i]-Y_tmp[i])/n
+            row_number = m*i
+
+            for j in range(m):#colums
+                g[j] = delta*X[j+row_number]
+
+        for j in range(m):
+            w[j] = w[j] - alpha*g[j]
+
+    return w
+
+#rows = 9577
+#columns = 140
+rows = 100 # samples
+columns = 5 # features
+
+n = rows
+m = columns
+
+prod = n*m
+amp_ratio = 10000
+alpha = 1
+iteration = 10
+X_int = Array(prod,sint)
+Y_int = Array(n,sint)
+rd_index = Array(n, sint)
+
+#for i in range(n) :
+#    rd_index = sint.get_raw_input_from(1)
+
+for i in range(prod):
+    X_int[i] = sint.get_raw_input_from(0)  #data
+for i in range (n):      #label
+    Y_int[i] = sint.get_raw_input_from(1)
+"""
+c = 2*n
+for i in range(c):
+    Y_total[i] = sint.get_raw_input_from(1)  #label and rd_index
+for i in range (n):      #label
+    Y_int[i] = Y_total[i]
+for i in range(n,c):   # rd_index
+    rd_index[i-n] = Y_total[i]
+"""
+g = Array(m,sfix) # initial value of gradient
+w = Array(m,sfix)
+for i in range(m):
+    w[i] = sfix(0)
+    g[i] = sfix(0)
+rd_index = [45, 95, 47, 85, 22, 13, 37, 74, 68, 49, 16, 9, 28, 3, 94, 73, 72, 21, 78, 53, 99, 1, 4, 0, 96, 79, 35, 24, 66, 44, 91, 32, 14, 17, 2, 83, 81, 98, 56, 71, 19, 52, 82, 26, 36, 69, 58, 41, 54, 80, 34, 20, 86, 70, 7, 42, 61, 62, 31, 5, 90, 6, 48, 65, 30, 33, 76, 67, 89, 23, 84, 75, 93, 77, 92, 38, 40, 15, 97, 10, 50, 88, 29, 43, 59, 60, 12, 57, 63, 46, 25, 18, 87, 55, 51, 39, 8, 11, 27, 64]
+w = stochastic_gradient_descend(iteration, alpha, w, X_int, Y_int, m, n, amp_ratio, rd_index)
+
+print_ln('rows is %s and columns is %s', n, m)
+
+for i in range(m):
+    print_ln('w(%s) is: %s', i, w[i].reveal())
+
+
+
+
+

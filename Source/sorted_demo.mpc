@@ -1,0 +1,23 @@
+A = Array(10, sint)
+#B = Array(10, sint)
+clear_B = Array(10, cint)
+for i in range(10):
+    A[i] = sint.get_raw_input_from(0)
+B = sorted(A)
+print_ln('%s', len(B))
+for i in range(len(B)):
+    A_single = A[i]
+    clear_A = A_single.reveal()
+    print_ln('%s', clear_A)
+print_ln('\n')
+for i in range(len(B)):
+    B_single = B[i]
+    clear_B = B_single.reveal()
+    print_ln('%s', clear_B)
+
+"""
+for i in range(10):
+    t_single = A[i]
+    clear_t = t_single.reveal()
+    print_ln('The t square value of feature %s is: %s', i+1, A)# should not be reveal in the real application
+"""

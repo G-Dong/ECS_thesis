@@ -1,0 +1,45 @@
+
+#This is the 2-sample t-test which is used for compare certain feature's influence. No module and no matrix #version. Used in SPDZ2 2 party communication system
+
+#from __future__ import division
+program.bit_length = 80
+print"program.bit_length: ", program.bit_length
+program.security = 40# The value in GC = 2^40
+import sys
+sys.setrecursionlimit(1000000)
+
+def cross(feature_num, array1, array2):
+    flag = sint(0)
+    intersection = Array(feature_num, sint)
+    for i in range(feature_num):
+        flag = array1[i] == array2[i] and array1[i] == 1
+        intersection[i] = flag
+    return(intersection)
+
+feature_num = 140
+
+nor_col101 = Array(feature_num, sint)
+nor_col102 = Array(feature_num, sint)
+for i in range(feature_num):
+    nor_col101[i] = sint.get_raw_input_from(0)
+for i in range(feature_num):
+    nor_col102[i] = sint.get_raw_input_from(1)
+"""
+for i in range(feature_num):
+    temp = nor_col101[i]
+    nor_col101_clear = temp.reveal()
+    print_ln('%s', nor_col101_clear)
+for i in range(feature_num):
+    temp = nor_col102[i]
+    nor_col102_clear = temp.reveal()
+    print_ln('%s', nor_col102_clear)
+"""
+inter_value = cross(feature_num, nor_col101, nor_col102)
+
+
+#print out command order and structure can not be changed. Or will have troubles
+for i in range(feature_num):
+    inter_single = inter_value[i]
+    clear_inter = inter_single.reveal()
+    print_ln('The intersection of 2 groups is %s', clear_inter)# should not be reveal in the real application
+

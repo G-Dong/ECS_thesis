@@ -1,0 +1,101 @@
+
+#This is the 2-sample t-test which is used for compare certain feature's influence. No module and no matrix #version. Used in SPDZ2 2 party communication system
+
+#from __future__ import division
+program.bit_length = 80
+print"program.bit_length: ", program.bit_length
+program.security = 40# The value in GC = 2^40
+import sys
+sys.setrecursionlimit(1000000)
+
+
+
+
+def load_int(X, num):
+    X_amp = Array(num,sfix)
+    for i in range(num):
+        d = sfix(); d.load_int(X[i])
+        X_amp[i] = d
+    return X_amp
+
+def get_real_data(X_amp, num, amp_ratio):
+    X =Array(num, sfix)
+    for i in range(num):
+        X[i] = X_amp[i]/amp_ratio
+    return X
+
+
+
+
+
+def gett(mean_1, mean_2, num_1, num_2, std_1, std_2,feature):
+    s_p_sqr = Array(feature, sfix)
+    t = Array(feature, sfix)
+    X_amp0 = load_int(mean_1, feature)
+    X_amp1 = load_int(mean_2, feature)
+    X_amp2 = load_int(std_1, feature)
+    X_amp3 = load_int(std_2, feature)
+    mean_1_float = get_real_data(X_amp0, feature, amp_ratio)
+    mean_2_float = get_real_data(X_amp1, feature, amp_ratio)
+    std_1_float = get_real_data(X_amp2, feature, amp_ratio)
+    std_2_float = get_real_data(X_amp3, feature, amp_ratio)
+    numerator = sfix()
+    denominator = sfix()
+    for i in range(feature):
+        s_p_sqr[i] = ((num_1 - 1)*std_1_float[i]*std_1_float[i] + (num_2 - 1)*std_2_float[i]*std_2_float[i])/(num_1+num_2-2)
+#   print_ln('check real sp_sqr data.............%s \n',s_p_sqr[i].reveal())
+        t[i] = (mean_1_float[i] - mean_2_float[i])*(mean_1_float[i] - mean_2_float[i])/(s_p_sqr[i]*float(1)/float(num_1) + float(1)/float(num_2))
+# print_ln('check real t numerator data.............%s \n',((mean_1_float[i] - mean_2_float[i])*(mean_1_float[i] - mean_2_float[i])).reveal())
+#   print_ln('annoying thing is, %s' ,float(1)/float(num_1) + float(1)/float(num_2))
+    return t
+
+def significant(t, threshold):
+    sig = t>threshold#sig can only be sint. sfix doesnt work
+    return sig
+
+
+num_1 = 9577 #data 101
+num_2 = 6869 #data 102
+feature = 20
+
+
+threshold = cfix(6.635776) # p-value here is chosen as 2.576 while the df is larger than 100 and 0.005                 #percentage. Also p_value is squared in order to compare with t^2
+party = 2
+amp_ratio = sfix(1000)#1000*1000, first for data, second for mean and variance
+t_value = Array(feature, sfix)
+mean = Array(2*feature, sint)
+std = Array(2*feature, sint)
+mean_1 = Array(feature, sint)
+mean_2 = Array(feature, sint)
+std_1 = Array(feature, sint)
+std_2 = Array(feature, sint)
+#mean_1_float = Array(feature, sfix)
+#mean_2_float = Array(feature, sfix)
+#std_1_float = Array(feature, sfix)
+#std_2_float = Array(feature, sfix)
+
+# 1 for control, 2 for noncontrol
+
+#0-mean_1, 1-mean_2, 2-std_1, 3-std_2
+for i in range(feature*party):
+    mean[i] = sint.get_raw_input_from(0)
+for i in range(feature*party):
+    std[i] = sint.get_raw_input_from(1)
+
+for i in range(feature): # group1 is first, group2 is second. In the same order for further parties
+    mean_1[i] = mean[i]
+    mean_2[i] = mean[i+feature]
+    std_1[i] = std[i]
+    std_2[i] = std[i+feature]
+
+
+t_value = gett(mean_1, mean_2, num_1, num_2, std_1, std_2, feature)
+#print out command order and structure can not be changed. Or will have troubles
+print_ln('Threshold is set as 6.635776, 1 for true, 0 for false \n')
+for i in range(feature):
+    t_single = t_value[i]
+    clear_t = t_single.reveal()
+    s = significant(t_single, threshold)
+    print_ln('The t square value of feature %s is: %s', i+1, clear_t)# should not be reveal in the real application
+    print_ln('This molecule leads to cancer: %s\n', s.reveal())
+

@@ -1,0 +1,101 @@
+
+#This is the 2-sample t-test which is used for compare certain feature's influence. No module and no matrix #version. Used in SPDZ2 2 party communication system
+
+
+program.bit_length = 80
+print"program.bit_length: ", program.bit_length
+program.security = 40# The value in GC = 2^40
+
+
+
+
+
+#def load_int(X, num):
+#    X_amp = Array(num,sfix)
+#    for i in range(num):
+#        d = sfix(); d.load_int(X[i])
+#        X_amp[i] = d
+#    return X_amp
+
+#def get_real_data(X_amp, num, amp_ratio):
+#    X =Array(num, sfix)
+#    for i in range(num):
+#        X[i] = X_amp[i]/amp_ratio
+#    return X
+def load_int(X, num):
+    X_amp = sfix()
+    d = sfix(); d.load_int(X)
+    X_amp = d
+    return X_amp
+
+def get_real_data(X_amp, num, amp_ratio):
+    X = sfix()
+    X = X_amp/amp_ratio
+    return X
+
+
+
+
+
+def gett(mean_1, mean_2, num_1, num_2, std_1, std_2):
+# t = sfix()
+    num = 1
+    X_amp0 = load_int(mean_1, num)
+    X_amp1 = load_int(mean_2, num)
+    X_amp2 = load_int(std_1, num)
+    X_amp3 = load_int(std_2, num)
+    mean_1_float = get_real_data(X_amp0, num, amp_ratio)
+    mean_2_float = get_real_data(X_amp1, num, amp_ratio)
+    std_1_float = get_real_data(X_amp2, num, amp_ratio)
+    std_2_float = get_real_data(X_amp3, num, amp_ratio)
+
+    s_p_sqr = (((num_1 - 1)*std_1_float*std_1_float + (num_2 - 1)*std_2_float*std_2_float)/(num_1+num_2-2))
+    t = (mean_1_float - mean_2_float)*(mean_1_float - mean_2_float)/(s_p_sqr*(1/num_1 + 1/num_2))
+
+    return t
+
+def significant(t, p_value):
+
+    if t > p_value:
+        sig = 'True'
+    else:
+        sig = 'False'
+    return sig
+
+
+num_1 = 9577 #data 101
+num_2 = 6869 #data 102
+feature = 10
+#totalnum_1 = num_1*feature
+#totalnum_2 = num_2*feature
+
+p_value = sfix(2.576) # p-value here is chosen as 2.576 while the df is larger than 100 and 0.005 percentage.
+
+amp_ratio = sfix(1000)
+t_value = Array(feature, sfix)
+mean_1 = Array(feature, sint)
+mean_2 = Array(feature, sint)
+std_1 = Array(feature, sint)
+std_2 = Array(feature, sint)
+#mean_1_float = Array(feature, sfix)
+#mean_2_float = Array(feature, sfix)
+#std_1_float = Array(feature, sfix)
+#std_2_float = Array(feature, sfix)
+
+# 1 for control, 2 for noncontrol
+
+#0-mean_1, 1-mean_2, 2-std_1, 3-std_2
+for i in range(feature):
+    mean_1[i] = sint.get_raw_input_from(0)
+for i in range(feature):
+    mean_2[i] = sint.get_raw_input_from(1)
+for i in range(feature):
+    std_1[i] = sint.get_raw_input_from(2)
+for i in range(feature):
+    std_2[i] = sint.get_raw_input_from(3)
+for i in range(feature):
+    t_value[i] = sfix(gett(mean_1[i], mean_2[i], num_1, num_2, std_1[i], std_2[i]))
+    t_value[i].reveal_to(i)
+    print_str('The t value is: %s\n'%t_value[i].reveal())# should not be reveal in the real application
+    print_str('This molecule leads to cancer: %s'%significant(t_value[i], p_value))
+

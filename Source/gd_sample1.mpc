@@ -1,0 +1,38 @@
+# (C) 2016 University of Bristol. See License.txt
+# sfix and cfix is just two function which can be called during the programming.
+# the semantic is indent-sensitive
+
+program.bit_length = 80
+print "program.bit_length: ", program.bit_length
+program.security = 40# The value in GF = 2^40
+
+
+n = 10
+m = 5
+
+
+
+# define array of fixed points 
+X = Array(n,sfix)
+Y = Array(n,sfix)
+
+for i in range(n):
+	X[i] = sfix(i)
+for i in range(n):
+        Y[i] = sfix(i)
+
+i = 0
+g = sfix(i) # initial value of gradient
+w = sfix(1.01)
+e = sfix(i)# initial value of error
+alpha = sfix(i)
+for i in range(100):
+	g = sfix(0) # initial value of gd
+	for j in range(n):
+		g = g + (1.0/n * (X[j]*w-Y[j]))*X[j]
+		w = w - alpha*g
+		e = (X[j]*w-Y[j])**2
+print_str('ERORRRRRRRRRRRRRRRRRRRR %s', e.reveal())
+print_str('wwwwwwwwwwwwwwwwwwwwwww %s', w.reveal())
+
+

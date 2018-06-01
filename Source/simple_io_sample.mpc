@@ -1,0 +1,44 @@
+#a = Array(1, sfix)
+#b = Array(1, sfix)
+#from __future__ import division
+a = sint(3)
+b = sint(2)
+c = sint()
+
+
+c = a>b
+print_ln ('c is    %s', c.reveal())
+"""
+c = sfix()
+c = a/b
+clear_c = 3/2
+print_ln('c clear is    %s', clear_c)
+print_ln('c is    %s', c.reveal())
+
+
+accumulator = 0
+for i in range(len(a)):
+    accumulator_a = accumulator + (i == 0) * a[i]
+for i in range(len(b)):
+    accumulator_b = accumulator + (i == 0) * b[i]
+
+#if sfix(accumulator_a.reveal() == accumulator_a.reveal()) == 1:
+c = sint(a[0].reveal() < b[0].reveal())
+#else:
+#    c = 1
+print_ln('c is      %s', c.reveal())
+
+temp = sfix(3==2)
+print_ln(temp)
+
+a[0] = 1
+b[0] = 2
+
+if a[0]>b[0]:
+    c = sfix(2)
+else:
+    c = sfix(1)
+
+clear_c = c.reveal()
+print_ln('c is         %s', clear_c)
+"""

@@ -1,0 +1,29 @@
+n = 3
+a = Array(n,sint)
+
+b = Array(n,sint)
+
+c = Array(n, sfix)
+
+e = Array(n, sfix)
+#c = sfix()
+
+amp_ratio = sint(3)
+
+for i in range(n):
+    a[i] = sint.get_raw_input_from(0)
+    b[i] = sint.get_raw_input_from(1)
+    d = sfix(); d.load_int(b[i])
+    c[i] = d
+
+for i in range(n):
+#a_tmp = (a[i]/3)
+#b_tmp = (b[i]/3)
+    e[i] = c[i]/6
+for i in range(n):
+    print_ln('Result of a is %s', a[i].reveal())
+    print_ln('Result of b is %s', b[i].reveal())
+    print_ln('Result of c is %s', c[i].reveal())
+    print_ln('Result of e is %s', e[i].reveal())
+print_ln('Result of d is %s', d.reveal())
+#c[i].reveal_to(1)
